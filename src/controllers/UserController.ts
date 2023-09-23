@@ -1,7 +1,8 @@
 import { textValidator } from "../utils/textValidator";
 import { isUserExists } from "../utils/isUserExists";
 import { hashPassword, unHashPassword } from "../utils/securePwd";
-import { IUser, IUserController } from "../Types/UserTypes";
+import { generateToken } from "../utils/jwtGenerator";
+import { IUser, IUserController } from "../types/UserTypes";
 import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 
@@ -43,8 +44,12 @@ const LoginController: IUserController = async (req, res) => {
       throw new Error(errorMessages.invaliCredentials);
     }
 
+    if (!(await isUserExists(email))) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
     const user = await pool.query(
-      "SELECT password FROM users WHERE email = $1",
+      "SELECT id,password FROM users WHERE email = $1",
       [email]
     );
 
@@ -53,10 +58,11 @@ const LoginController: IUserController = async (req, res) => {
       user.rows[0]?.password
     );
 
-    if (await isUserExists(email) && plainPassword) {
-      
+    if ((await isUserExists(email)) && plainPassword) {
+      res.status(200).json({ response: generateToken(user.rows[0]?.id) });
+    } else {
+      throw new Error(errorMessages.invaliCredentials);
     }
-
   } catch (error) {
     res.status(500).json({ response: error?.message });
   }
