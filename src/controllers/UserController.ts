@@ -6,6 +6,8 @@ import { IUser, IUserController } from "../types/UserTypes";
 import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 
+//-----Register-----
+
 const RegisterController: IUserController = async (req, res) => {
   try {
     const body = req.body;
@@ -35,6 +37,8 @@ const RegisterController: IUserController = async (req, res) => {
     res.status(500).json({ response: error?.message });
   }
 };
+
+//-----Login-----
 
 const LoginController: IUserController = async (req, res) => {
   try {
@@ -68,4 +72,47 @@ const LoginController: IUserController = async (req, res) => {
   }
 };
 
-export { RegisterController, LoginController };
+//-----Reset password-----
+
+const resetPasswordController: IUserController = async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body;
+
+    if (!textValidator([email, currentPassword, newPassword])) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
+    if (!(await isUserExists(email))) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
+    const user = await pool.query(
+      "SELECT id,password FROM users WHERE email = $1",
+      [email]
+    );
+
+    const plainPassword = await unHashPassword(
+      currentPassword,
+      user.rows[0]?.password
+    );
+
+    if ((await isUserExists(email)) && plainPassword) {
+      const hashedPassword: string = await hashPassword(newPassword);
+
+      const changePwd = await pool.query(
+        "UPDATE users SET password = $1 WHERE email = $2 RETURNING *",
+        [hashedPassword, email]
+      );
+
+      if (Object.keys(changePwd.rows[0])?.length) {
+        res.status(201).json({ repsonse: successMessages.passwordChanged });
+      }
+    } else {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+  } catch (error) {
+    res.status(500).json({ response: error?.message });
+  }
+};
+
+export { RegisterController, LoginController, resetPasswordController };

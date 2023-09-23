@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   RegisterController,
   LoginController,
+  resetPasswordController,
 } from "../controllers/UserController";
 
 const router: Router = Router();
@@ -14,6 +15,6 @@ router.post("/register", RegisterController);
 router.post("/log-in", LoginController);
 
 //Password recovery
-router.post("password-recovery", () => {});
+router.post("/password/recovery", resetPasswordController);
 
 export default router;
