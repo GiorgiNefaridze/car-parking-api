@@ -1,12 +1,12 @@
-import express, { json } from "express";
+import express, { json, Express } from "express";
 import cors from "cors";
 import { config } from "dotenv";
 
-import UserRoutes from "./routes/userRoutes.ts";
+import UserRoutes from "./routes/userRoutes";
 
 config();
 
-const app = express();
+const app: Express = express();
 const port: number = Number(process.env.PORT) ?? 4000;
 
 app.use(cors());
