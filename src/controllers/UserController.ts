@@ -1,11 +1,11 @@
 import { textValidator } from "../utils/textValidator";
 import { isUserExists } from "../utils/isUserExists";
-import { hashPassword } from "../utils/securePwd";
-import { IUser, IRegister } from "../Types/UserTypes";
+import { hashPassword, unHashPassword } from "../utils/securePwd";
+import { IUser, IUserController } from "../Types/UserTypes";
 import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 
-const RegisterController: IRegister = async (req, res) => {
+const RegisterController: IUserController = async (req, res) => {
   try {
     const body = req.body;
     const { firstname, lastname, email, password } = body as IUser;
@@ -14,7 +14,7 @@ const RegisterController: IRegister = async (req, res) => {
       throw new Error(errorMessages.invaliCredentials);
     }
 
-    if (await isUserExists(body)) {
+    if (await isUserExists(email)) {
       throw new Error(errorMessages.userExists);
     }
 
@@ -31,8 +31,35 @@ const RegisterController: IRegister = async (req, res) => {
 
     throw new Error(errorMessages.internalError);
   } catch (error) {
-    res.status(500).json({ response: error.message });
+    res.status(500).json({ response: error?.message });
   }
 };
 
-export { RegisterController };
+const LoginController: IUserController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!textValidator([email, password])) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
+    const user = await pool.query(
+      "SELECT password FROM users WHERE email = $1",
+      [email]
+    );
+
+    const plainPassword = await unHashPassword(
+      password,
+      user.rows[0]?.password
+    );
+
+    if (await isUserExists(email) && plainPassword) {
+      
+    }
+
+  } catch (error) {
+    res.status(500).json({ response: error?.message });
+  }
+};
+
+export { RegisterController, LoginController };

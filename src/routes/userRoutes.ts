@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-import { RegisterController } from "../controllers/UserController";
+import {
+  RegisterController,
+  LoginController,
+} from "../controllers/UserController";
 
 const router: Router = Router();
 
@@ -8,7 +11,7 @@ const router: Router = Router();
 router.post("/register", RegisterController);
 
 //Login into the application as an user
-router.post("/log-in", () => {});
+router.post("/log-in", LoginController);
 
 //Password recovery
 router.post("password-recovery", () => {});
