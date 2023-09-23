@@ -3,6 +3,7 @@ import cors from "cors";
 import { config } from "dotenv";
 
 import UserRoutes from "./routes/userRoutes";
+import CarRoutes from "./routes/carRoutes";
 
 config();
 
@@ -13,5 +14,6 @@ app.use(cors());
 app.use(json());
 
 app.use("/api/user", UserRoutes);
+app.use("/api/car", CarRoutes);
 
 app.listen(port, () => console.log(`Sever is running on ${port} port`));

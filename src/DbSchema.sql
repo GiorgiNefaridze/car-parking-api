@@ -8,3 +8,12 @@ CREATE TABLE users (
     password VARCHAR(200) NOT NULL,
     UNIQUE (email)
 );
+
+CREATE TYPE type AS ENUM ('sedan','hatchback','crossover','cabriolet','compartment','minivan');
+
+CREATE TABLE cars(
+    car_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    number_plate VARCHAR(255) NOT NULL,
+    car_type type
+);

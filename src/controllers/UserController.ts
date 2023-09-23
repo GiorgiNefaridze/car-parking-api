@@ -2,13 +2,13 @@ import { textValidator } from "../utils/textValidator";
 import { isUserExists } from "../utils/isUserExists";
 import { hashPassword, unHashPassword } from "../utils/securePwd";
 import { generateToken } from "../utils/jwtGenerator";
-import { IUser, IUserController } from "../types/UserTypes";
+import { IUser, IController } from "../types/UserTypes";
 import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 
 //-----Register-----
 
-const RegisterController: IUserController = async (req, res) => {
+const RegisterController: IController = async (req, res) => {
   try {
     const body = req.body;
     const { firstname, lastname, email, password } = body as IUser;
@@ -40,7 +40,7 @@ const RegisterController: IUserController = async (req, res) => {
 
 //-----Login-----
 
-const LoginController: IUserController = async (req, res) => {
+const LoginController: IController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -74,7 +74,7 @@ const LoginController: IUserController = async (req, res) => {
 
 //-----Reset password-----
 
-const resetPasswordController: IUserController = async (req, res) => {
+const resetPasswordController: IController = async (req, res) => {
   try {
     const { email, currentPassword, newPassword } = req.body;
 
