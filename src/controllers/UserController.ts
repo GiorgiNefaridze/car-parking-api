@@ -28,9 +28,9 @@ const RegisterController: IController = async (req, res) => {
 
     if (Object.keys(newUser.rows[0])?.length) {
       res.status(201).json({ response: successMessages.userCreated });
+    } else {
+      throw new Error(errorMessages.internalError);
     }
-
-    throw new Error(errorMessages.internalError);
   } catch (error) {
     res.status(500).json({ response: error?.message });
   }
