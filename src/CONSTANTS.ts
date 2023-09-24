@@ -9,4 +9,5 @@ export const errorMessages = {
 export const successMessages = {
   userCreated: "User created successfully 🚀",
   passwordChanged: "Password has been changed 🤫",
+  carCreated: "Car has been created 🏎️",
 };

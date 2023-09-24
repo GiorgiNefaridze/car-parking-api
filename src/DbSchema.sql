@@ -15,5 +15,6 @@ CREATE TABLE cars(
     car_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     number_plate VARCHAR(255) NOT NULL,
-    car_type type
+    car_type type,
+    owner_id INT REFERENCES users(id)
 );
