@@ -7,6 +7,7 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(200) NOT NULL,
     balance INTEGER NOT NULL DEFAULT 100,
+    isAdministrator BOOLEAN NOT NULL DEFAULT false,
     UNIQUE (email)
 );
 

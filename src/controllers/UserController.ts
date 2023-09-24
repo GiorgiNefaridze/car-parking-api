@@ -9,7 +9,8 @@ import { errorMessages, successMessages } from "../CONSTANTS";
 const RegisterController: IController = async (req, res) => {
   try {
     const body = req.body;
-    const { firstname, lastname, email, password } = body as IUser;
+    const { firstname, lastname, email, password, isAdministrator } =
+      body as IUser;
 
     if (!textValidator([firstname, lastname, email, password])) {
       throw new Error(errorMessages.invaliCredentials);
@@ -22,8 +23,8 @@ const RegisterController: IController = async (req, res) => {
     const hashedPassword: string = await hashPassword(password);
 
     const newUser = await pool.query(
-      "INSERT INTO users (firstname,lastname,email,password) VALUES ($1,$2,$3,$4) RETURNING *",
-      [firstname, lastname, email, hashedPassword]
+      "INSERT INTO users (firstname,lastname,email,password,isAdministrator) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+      [firstname, lastname, email, hashedPassword, isAdministrator]
     );
 
     if (Object.keys(newUser.rows[0])?.length) {
