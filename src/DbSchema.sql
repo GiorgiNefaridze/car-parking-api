@@ -16,5 +16,6 @@ CREATE TABLE cars(
     name VARCHAR(255) NOT NULL,
     number_plate VARCHAR(255) NOT NULL,
     car_type type,
-    owner_id INT REFERENCES users(id)
+    owner_id INT REFERENCES users(id),
+    UNIQUE (number_plate)
 );
