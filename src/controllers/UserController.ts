@@ -6,8 +6,6 @@ import { IUser, IController } from "../types/UserTypes";
 import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 
-//-----Register-----
-
 const RegisterController: IController = async (req, res) => {
   try {
     const body = req.body;
@@ -37,8 +35,6 @@ const RegisterController: IController = async (req, res) => {
     res.status(500).json({ response: error?.message });
   }
 };
-
-//-----Login-----
 
 const LoginController: IController = async (req, res) => {
   try {
@@ -71,8 +67,6 @@ const LoginController: IController = async (req, res) => {
     res.status(500).json({ response: error?.message });
   }
 };
-
-//-----Reset password-----
 
 const resetPasswordController: IController = async (req, res) => {
   try {

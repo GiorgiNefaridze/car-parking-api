@@ -15,4 +15,5 @@ export const successMessages = {
   passwordChanged: "Password has been changed 🤫",
   carCreated: "Car has been created 🏎️",
   carRemoved: "Car has been removed successfully",
+  changedCarDetails: "Car details have been updated 🔥",
 };
