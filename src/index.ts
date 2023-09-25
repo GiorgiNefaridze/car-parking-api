@@ -4,6 +4,7 @@ import { config } from "dotenv";
 
 import UserRoutes from "./routes/userRoutes";
 import CarRoutes from "./routes/carRoutes";
+import ParkingRoutes from "./routes/parkingRoutes";
 
 config();
 
@@ -15,5 +16,6 @@ app.use(json());
 
 app.use("/api/user", UserRoutes);
 app.use("/api/car", CarRoutes);
+app.use("/api/parking", ParkingRoutes);
 
 app.listen(port, () => console.log(`Sever is running on ${port} port`));

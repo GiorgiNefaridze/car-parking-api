@@ -21,3 +21,12 @@ CREATE TABLE cars(
     owner_id INT REFERENCES users(id),
     UNIQUE (number_plate)
 );
+
+CREATE TABLE parkingzone(
+    parking_id SERIAL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    charge_per_hour INTEGER NOT NULL,
+    owner_id INT REFERENCES users(id),
+    UNIQUE(name,address)
+);
