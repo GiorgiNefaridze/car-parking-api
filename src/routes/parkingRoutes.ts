@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-import { CreateParkingController } from "../controllers/ParkingController";
+import {
+  CreateParkingController,
+  UpdateParkingController,
+} from "../controllers/ParkingController";
 
 const router: Router = Router();
 
@@ -8,7 +11,7 @@ const router: Router = Router();
 router.post("/", CreateParkingController);
 
 //Update the parking zone
-router.put("/:name", () => {});
+router.put("/:name", UpdateParkingController);
 
 //Delete the parking zone
 router.delete("/:name", () => {});

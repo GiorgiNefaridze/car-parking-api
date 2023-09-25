@@ -7,7 +7,7 @@ export const errorMessages = {
   missingToken:
     "Please make sure that you are logged in or have valid access token(Http headers)",
   noPermission:
-    "Sorry, you do not have permission,you are not owner (check details again)",
+    "Sorry, you do not have permission,you are not owner/administrator (check details again)",
 };
 
 export const successMessages = {
@@ -17,4 +17,5 @@ export const successMessages = {
   carRemoved: "Car has been removed successfully",
   changedCarDetails: "Car details have been updated 🔥",
   parkingCreated: "Parking zone has been created",
+  parkingUpdated: "Parking zone has been updated",
 };
