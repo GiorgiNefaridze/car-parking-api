@@ -90,4 +90,96 @@ const UpdateParkingController: IController = async (req, res) => {
   }
 };
 
-export { CreateParkingController, UpdateParkingController };
+const DeleteParkingController: IController = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const token = req.headers["authorization"] as string;
+
+    const userId = parseHeader(token);
+
+    if (!textValidator([name]) || !userId) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
+    const {
+      rows: [credentials],
+    } = await pool.query("SELECT isadministrator FROM users WHERE id = $1", [
+      userId,
+    ]);
+
+    if (!credentials?.isadministrator) {
+      throw new Error(errorMessages.noPermission);
+    }
+
+    const {
+      rows: [result],
+    } = await pool.query(
+      "DELETE FROM parkingzone WHERE name = $1 RETURNING parking_id",
+      [name]
+    );
+
+    if (result && Object.keys(result)?.length) {
+      res.status(200).json({ response: successMessages.parkingRemoved });
+    } else {
+      throw new Error(errorMessages.internalError);
+    }
+  } catch (error) {
+    res.status(500).json({ response: error?.message });
+  }
+};
+
+const BookParkingController: IController = async (req, res) => {
+  try {
+    const { numberPlate, zoneName } = req.body;
+    const token = req.headers["authorization"] as string;
+
+    const userId = parseHeader(token);
+
+    if (!textValidator([numberPlate, zoneName]) || !userId) {
+      throw new Error(errorMessages.invaliCredentials);
+    }
+
+    const {
+      rows: [car],
+    } = await pool.query(
+      "SELECT car_id FROM cars WHERE number_plate = $1 AND owner_id = $2",
+      [numberPlate, userId]
+    );
+
+    const {
+      rows: [parking],
+    } = await pool.query(
+      "SELECT parking_id FROM parkingzone WHERE name = $1 AND owner_id = $2",
+      [zoneName, userId]
+    );
+
+    if (
+      !(car && Object.keys(car)?.length) ||
+      !(parking && Object.keys(parking)?.length)
+    ) {
+      throw new Error(errorMessages.noPermission);
+    }
+
+    const {
+      rows: [booking],
+    } = await pool.query(
+      "INSERT INTO bookingparking (car_id,owner_id,parking_id) VALUES ($1, $2, $3) RETURNING booking_id",
+      [car?.car_id, userId, parking?.parking_id]
+    );
+
+    if (booking && Object.keys(booking)?.length) {
+      res.status(200).json({ response: successMessages.booked });
+    } else {
+      throw new Error(errorMessages.internalError);
+    }
+  } catch (error) {
+    res.status(500).json({ response: error?.message });
+  }
+};
+
+export {
+  CreateParkingController,
+  UpdateParkingController,
+  DeleteParkingController,
+  BookParkingController,
+};

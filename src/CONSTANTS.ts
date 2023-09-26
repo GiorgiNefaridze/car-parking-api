@@ -18,4 +18,6 @@ export const successMessages = {
   changedCarDetails: "Car details have been updated 🔥",
   parkingCreated: "Parking zone has been created",
   parkingUpdated: "Parking zone has been updated",
+  parkingRemoved: "Parking zone has been removed",
+  booked: "parking zone has been booked",
 };
