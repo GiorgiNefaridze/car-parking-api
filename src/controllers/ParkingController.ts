@@ -149,9 +149,13 @@ const BookParkingController: IController = async (req, res) => {
     const {
       rows: [parking],
     } = await pool.query(
-      "SELECT parking_id FROM parkingzone WHERE name = $1 AND owner_id = $2",
+      "SELECT parking_id, charge_per_hour FROM parkingzone WHERE name = $1 AND owner_id = $2",
       [zoneName, userId]
     );
+
+    const {
+      rows: [user],
+    } = await pool.query("SELECT balance FROM users WHERE id = $1", [userId]);
 
     if (
       !(car && Object.keys(car)?.length) ||
@@ -168,10 +172,25 @@ const BookParkingController: IController = async (req, res) => {
     );
 
     if (booking && Object.keys(booking)?.length) {
+      if (user?.balance <= parking?.charge_per_hour) {
+        throw new Error(errorMessages.noBalance);
+      }
+
+      await pool.query("UPDATE users SET balance = $1 WHERE id = $2", [
+        user?.balance - parking.charge_per_hour,
+        userId,
+      ]);
       res.status(200).json({ response: successMessages.booked });
     } else {
       throw new Error(errorMessages.internalError);
     }
+  } catch (error) {
+    res.status(500).json({ response: error?.message });
+  }
+};
+
+const GetBokingController: IController = async (req, res) => {
+  try {
   } catch (error) {
     res.status(500).json({ response: error?.message });
   }
@@ -182,4 +201,5 @@ export {
   UpdateParkingController,
   DeleteParkingController,
   BookParkingController,
+  GetBokingController,
 };

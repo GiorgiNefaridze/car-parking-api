@@ -8,6 +8,7 @@ export const errorMessages = {
     "Please make sure that you are logged in or have valid access token(Http headers)",
   noPermission:
     "Sorry, you do not have permission,you are not owner/administrator (check details again)",
+  noBalance: "You do not have enough to book this parking zone",
 };
 
 export const successMessages = {

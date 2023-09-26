@@ -5,6 +5,7 @@ import {
   UpdateParkingController,
   DeleteParkingController,
   BookParkingController,
+  GetBokingController,
 } from "../controllers/ParkingController";
 
 const router: Router = Router();
@@ -19,7 +20,7 @@ router.put("/:name", UpdateParkingController);
 router.delete("/:name", DeleteParkingController);
 
 //Get all data about the parking zone
-router.get("/booking", () => {});
+router.get("/booking", GetBokingController);
 
 //Book parking zone
 router.post("/booking", BookParkingController);
