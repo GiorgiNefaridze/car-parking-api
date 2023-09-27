@@ -2,6 +2,7 @@ import { pool } from "../database/DbConnection";
 import { errorMessages, successMessages } from "../CONSTANTS";
 import { IParking } from "../types/ParkingTypes";
 import { IController } from "../types/UserTypes";
+import { isAdministrator } from "../utils/isAdministrator";
 import { parseHeader } from "../utils/parseHeader";
 import { textValidator } from "../utils/textValidator";
 
@@ -16,13 +17,9 @@ const CreateParkingController: IController = async (req, res) => {
       throw new Error(errorMessages.invaliCredentials);
     }
 
-    const {
-      rows: [credentials],
-    } = await pool.query("SELECT isadministrator FROM users WHERE id = $1", [
-      userId,
-    ]);
+    const isAdmin = isAdministrator(userId);
 
-    if (!credentials?.isadministrator) {
+    if (!isAdmin) {
       throw new Error(errorMessages.noPermission);
     }
 
@@ -63,13 +60,9 @@ const UpdateParkingController: IController = async (req, res) => {
       throw new Error(errorMessages.invaliCredentials);
     }
 
-    const {
-      rows: [credentials],
-    } = await pool.query("SELECT isadministrator FROM users WHERE id = $1", [
-      userId,
-    ]);
+    const isAdmin = isAdministrator(userId);
 
-    if (!credentials?.isadministrator) {
+    if (!isAdmin) {
       throw new Error(errorMessages.noPermission);
     }
 
@@ -101,13 +94,9 @@ const DeleteParkingController: IController = async (req, res) => {
       throw new Error(errorMessages.invaliCredentials);
     }
 
-    const {
-      rows: [credentials],
-    } = await pool.query("SELECT isadministrator FROM users WHERE id = $1", [
-      userId,
-    ]);
+    const isAdmin = isAdministrator(userId);
 
-    if (!credentials?.isadministrator) {
+    if (!isAdmin) {
       throw new Error(errorMessages.noPermission);
     }
 
@@ -191,6 +180,27 @@ const BookParkingController: IController = async (req, res) => {
 
 const GetBokingController: IController = async (req, res) => {
   try {
+    const token = req.headers["authorization"] as string;
+
+    const userId = parseHeader(token);
+
+    const isAdmin = isAdministrator(userId);
+
+    if (!isAdmin) {
+      throw new Error(errorMessages.noPermission);
+    }
+
+    const {
+      rows: [bookingHistory],
+    } = await pool.query(
+      "select u.firstname,u.lastname,u.balance,c.name as car_name,c.number_plate,c.car_type,p.name as parking_name,p.address,p.charge_per_hour from bookingparking b join cars c on c.car_id = b.car_id join users u on u.id = b.owner_id join parkingzone p on p.parking_id = b.parking_id;"
+    );
+
+    if (bookingHistory && Object.keys(bookingHistory)?.length) {
+      res.status(200).json({ response: bookingHistory });
+    } else {
+      throw new Error(errorMessages.internalError);
+    }
   } catch (error) {
     res.status(500).json({ response: error?.message });
   }
